@@ -1,0 +1,130 @@
+// Lexical grammar for j--
+// Copyright 2013 Bill Campbell, Swami Iyer and Bahar Akbal-Delibas
+
+// Whitespace -- ignored
+" "|"\t"|"\n"|"\r"|"\f"
+
+// Single line comment -- ignored
+"//" {~("\n"|"\r")} ("\n"|"\r"["\n"])
+
+// Multi-line comment -- ignored
+"/*" {~("\n"|"r")} "*/"
+
+// Reserved words
+ABSTRACT    ::= "abstract"
+BOOLEAN     ::= "boolean"
+CHAR        ::= "char"
+CLASS       ::= "class"
+ELSE        ::= "else"
+EXTENDS     ::= "extends"
+FALSE       ::= "false"
+IF          ::= "if"
+IMPORT      ::= "import"
+INSTANCEOF  ::= "instanceof"
+INT         ::= "int"
+NEW         ::= "new"
+NULL        ::= "null"
+PACKAGE     ::= "package"
+PRIVATE     ::= "private"
+PROTECTED   ::= "protected"
+PUBLIC      ::= "public"
+RETURN      ::= "return"
+STATIC      ::= "static"
+SUPER       ::= "super"
+THIS        ::= "this"
+TRUE        ::= "true"
+VOID        ::= "void"
+WHILE       ::= "while"
+
+ASSERT		::= "assert"
+BREAK		::= "break"
+BYTE		::= "byte"
+CASE		::= "case"
+CATCH		::= "catch"
+CONST		::= "const"
+CONTINUE	::= "continue"
+DEFAULT		::=	"default"
+DO			::= "DO"
+DOUBLE		::= "DOUBLE"
+ENUM		::= "ENUM"
+FINAL		::= "final"
+FINALLY		::= "finally"
+FLOAT		::= "float"
+FOR			::= "for"
+GOTO		::= "goto"
+IMPLEMENT	::= "implement"
+INTERFACE	::= "interface"
+LONG		::= "long"
+NATIVE		::= "native"
+SHORT		::= "short"
+STRICTFP	::= "strictfp"
+SWITCH		::= "switch"
+SYNCHRONIZED ::= "synchronized"
+THROW		::= "throw"
+THROWS		::= "throws"
+TRANSIENT 	::= "transient"
+TRY			::= "try"
+VOLATILE	::= "volatile"
+
+
+// Operators
+ASSIGN      ::= "="
+EQUAL       ::= "=="
+GT          ::= ">"
+INC         ::= "++"
+LAND        ::= "&&"
+LE          ::= "<="
+LNOT        ::= "!"
+MINUS       ::= "-"
+PLUS        ::= "+"
+PLUS_ASSIGN ::= "+="
+STAR        ::= "*"
+
+DIV 		::= "/"
+MINUS_ASSIGN ::= "-="
+REMINDER	::= "%"
+DEC			::= "--"
+NEQUAL		::= "!="
+GE			::= ">="
+LT			::= "<"
+LOR			::= "||"
+BIT_NOT 	::= "~"
+LEFT_SHIFT	::= "<<"
+RIGHT_SHIFT	::= ">>"
+URIGHT_SHIFT ::= ">>>"
+BIT_AND		::= "&"
+BIT_OR		::= "|"
+BIT_XOR		::= "^"
+
+// Separators
+COMMA       ::= ","
+DOT         ::= "."
+LBRACK      ::= "["
+LCURLY      ::= "{"
+LPAREN      ::= "("
+RBRACK      ::= "]"
+RCURLY      ::= "}"
+RPAREN      ::= ")"
+SEMI        ::= ";"
+
+// Identifiers
+IDENTIFIER ::= ("a"-"z"|"A"-"Z"|"_"|"$") {"a"-"z"|"A"-"Z"|"_"|"0"-"9"|"$"}
+
+// Literals
+HEX_DIGITS ::= ("0"-"9"|"A"-"F"|"a"-"f") {"0"-"9"|"A"-"F"|"a"-"f"}
+FLOATING_POINT ::= {"0"-"9"} "." ("0"-"9") {"0"-"9"} ["e" | "E" ["+" | "-"]] ("1"-"9") {"0"-"9"}
+INT_LITERAL    ::= ("0" | ("1"-"9") {"0"-"9"}) 
+					| ("0" ("x" | "X") HEX_DIGITS)
+					| ("0" ("b" | "B") ("0" | "1") {"0" | "1"})
+					| ("0" ("1"-"8") {"0"-"8"})
+LONG_LITERAL	::= "0" | ("1"-"9") {"0"-"9"} ("L" | "l")
+FLOAT_LITERAL	::= FLOATING_POINT ("F" | "f")
+DOUBLE_LITERAL	::= FLOATING_POINT ["D" | "d"]
+ESC            ::= "\\" ("n"|"r"|"t"|"b"|"f"|"'"|"\""|"\\")
+STRING_LITERAL ::= "\"" {ESC | ~("\""|"\\"|"\n"|"\r")} "\""
+CHAR_LITERAL   ::= "'" (ESC | ~("'"|"\n"|"\r"|"\\")) "'"
+
+// End of file
+EOF            ::= "<end of file>"
+
+
