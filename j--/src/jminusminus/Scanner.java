@@ -98,7 +98,7 @@ class Scanner {
         reserved.put(FLOAT.image(), FLOAT);
         reserved.put(FOR.image(), FOR);
         reserved.put(GOTO.image(), GOTO);
-        reserved.put(IMPLEMENT.image(), IMPLEMENT);
+        reserved.put(IMPLEMENTS.image(), IMPLEMENTS);
         reserved.put(INTERFACE.image(), INTERFACE);
         reserved.put(LONG.image(), LONG);
         reserved.put(NATIVE.image(), NATIVE);
@@ -136,7 +136,7 @@ class Scanner {
                     while (ch != '\n' && ch != EOFCH) {
                         nextCh();
                     }
-                } else if (ch == '*'){
+                } else if (ch == '*') {
                 	while (ch != EOFCH) {
                 		nextCh();
                 		if (ch == '*') {
@@ -147,6 +147,9 @@ class Scanner {
                 			}
                 		}
                 	}
+                } else if (ch == '=') {
+                	nextCh();
+                	return new TokenInfo(DIV_ASSIGN, line);
                 } else {
                     return new TokenInfo(DIV, line);
                 }
@@ -198,6 +201,10 @@ class Scanner {
             }
         case '*':
             nextCh();
+            if (ch == '=') {
+            	nextCh();
+            	return new TokenInfo(STAR_ASSIGN, line);
+            }
             return new TokenInfo(STAR, line);
         case '+':
             nextCh();

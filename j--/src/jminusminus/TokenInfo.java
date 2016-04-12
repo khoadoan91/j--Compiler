@@ -26,12 +26,12 @@ enum TokenKind {
     
 		    DIV("/"), MINUS_ASSIGN("-="), REMINDER("%"), NEQUAL("!="), GE(">="), LT("<"),
 		    LOR("||"), BIT_NOT ("~"), LEFT_SHIFT("<<"), RIGHT_SHIFT(">>"), URIGHT_SHIFT(">>>"),
-		    BIT_AND("&"), BIT_OR("|"), BIT_XOR("^"),
+		    BIT_AND("&"), BIT_OR("|"), BIT_XOR("^"), STAR_ASSIGN("*="), DIV_ASSIGN("/="),
 		    
 		    ASSERT("assert"), BREAK("break"), BYTE("byte"), CASE("case"), CATCH("catch"),
 		    CONST("const"), CONTINUE("continue"), DEFAULT("default"), DO("DO"),
 		    DOUBLE("DOUBLE"), ENUM("ENUM"), FINAL("final"), FINALLY("finally"), FLOAT("float"),
-		    FOR("for"), GOTO("goto"), IMPLEMENT("implement"), INTERFACE("interface"),
+		    FOR("for"), GOTO("goto"), IMPLEMENTS("implements"), INTERFACE("interface"),
 		    LONG("long"), NATIVE("native"), SHORT("short"), STRICTFP("strictfp"), SWITCH("switch"),
 		    SYNCHRONIZED("synchronized"), THROW("throw"), THROWS("throws"), TRANSIENT("transient"),
 		    TRY("try"), VOLATILE("volatile"), 

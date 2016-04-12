@@ -3,6 +3,7 @@
 package jminusminus;
 
 import java.util.ArrayList;
+
 import static jminusminus.TokenKind.*;
 
 /**
@@ -654,6 +655,11 @@ public class Parser {
             JExpression test = parExpression();
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
+        } else if (have(FOR)) {
+        	JExpression test = parExpression();
+        	JStatement statement = statement();
+        	// FIXME create JForStatement and replace it in the next line.
+        	return new JWhileStatement(line, test, statement);
         } else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);
@@ -1007,6 +1013,10 @@ public class Parser {
             return new JPlusAssignOp(line, lhs, assignmentExpression());
         } else if (have(MINUS_ASSIGN)) {
         	return new JMinusAssignOp(line, lhs, assignmentExpression());
+        } else if (have(STAR_ASSIGN)) {
+        	return new JStarAssignOp(line, lhs, assignmentExpression());
+        } else if (have(DIV_ASSIGN)) {
+        	return new JDivideAssignOp(line, lhs, assignmentExpression());
         } else {
             return lhs;
         }
@@ -1353,8 +1363,14 @@ public class Parser {
         while (see(DOT) || see(LBRACK)) {
             primaryExpr = selector(primaryExpr);
         }
-        while (have(DEC)) {
-    		primaryExpr = new JPostDecrementOp(line, primaryExpr);
+        if (see(DEC)) {
+	        while (have(DEC)) {
+	    		primaryExpr = new JPostDecrementOp(line, primaryExpr);
+	        }
+        } else if (see(INC)) {
+        	while (have(INC)) {
+        		primaryExpr = new JPostIncrementOp(line, primaryExpr);
+        	}
         }
         return primaryExpr;
     }
@@ -1546,7 +1562,15 @@ public class Parser {
         int line = scanner.token().line();
         if (have(INT_LITERAL)) {
             return new JLiteralInt(line, scanner.previousToken().image());
-        } else if (have(CHAR_LITERAL)) {
+        } 
+//        else if (have(LONG_LITERAL)) {
+//        	return new JLiteralLong(line, scanner.previousToken().image());
+//        } else if (have(DOUBLE_LITERAL)) {
+//        	return new JLiteralDouble(line, scanner.previousToken().image());
+//        } else if (have(FLOAT_LITERAL)) {
+//        	return new JLiteralFloat(line, scanner.previousToken().image());
+//        } 
+        else if (have(CHAR_LITERAL)) {
             return new JLiteralChar(line, scanner.previousToken().image());
         } else if (have(STRING_LITERAL)) {
             return new JLiteralString(line, scanner.previousToken().image());
