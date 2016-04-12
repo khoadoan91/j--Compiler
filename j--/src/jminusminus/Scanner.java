@@ -355,13 +355,30 @@ class Scanner {
         case '0':
             // Handle only simple decimal integers for now.
             nextCh();
-            if (ch == 'x') {
-            	
-            } else if (ch == 'b') {
-            	
-            } else {
-                return new TokenInfo(INT_LITERAL, "0", line);
-            }
+//            buffer = new StringBuffer();
+//            if (ch == 'x') {
+//            	buffer.append("0x");
+//            	nextCh();
+//            	while (isHex(ch)) {
+//            		buffer.append(ch);
+//            		nextCh();
+//            	}
+//            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+//            } else if (ch == 'b') {
+//            	buffer.append("0b");
+//            	nextCh();
+//            	while (ch == '0' || ch == '1') {
+//            		buffer.append(ch);
+//            		nextCh();
+//            	}
+//            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+//            } else if (ch == '0') {
+//            	while (ch == '0') {
+//            		nextCh();
+//            	}
+//            	buffer.append("0");
+//            } 
+            return new TokenInfo(INT_LITERAL, "0", line);
         case '1':
         case '2':
         case '3':
@@ -371,7 +388,8 @@ class Scanner {
         case '7':
         case '8':
         case '9':
-            buffer = new StringBuffer();
+//            if (buffer == null) 
+            	buffer = new StringBuffer();
             while (isDigit(ch)) {
                 buffer.append(ch);
                 nextCh();
@@ -470,6 +488,10 @@ class Scanner {
         System.err.printf(message, args);
         System.err.println();
     }
+    
+    private boolean isHex(char c) {
+    	return (c >= '0' && c <= '9' || c >= 'A' && c <= 'F' || c >= 'a' || c <= 'f');
+    }
 
     /**
      * Return true if the specified character is a digit (0-9); false otherwise.
@@ -478,7 +500,6 @@ class Scanner {
      *            character.
      * @return true or false.
      */
-
     private boolean isDigit(char c) {
         return (c >= '0' && c <= '9');
     }

@@ -10,12 +10,12 @@ public class NumberLiteral {
 	double doubleNumber;
 	
 	public NumberLiteral() {
-		decimal = 091;
-		oct = 0812;
+		decimal = 00091;
+		oct = 0712;
 		hex = 0xF;
 		binary = 0b01;
-		longNumber = 10L;
-		floatNumber = 10.0f;
+		longNumber = 10;
+		floatNumber = 10.0;
 		doubleNumber = 5.0;
 	}
 }

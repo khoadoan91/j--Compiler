@@ -51,7 +51,8 @@ class JLiteralInt extends JExpression {
      */
 
     public void codegen(CLEmitter output) {
-        int i = Integer.parseInt(text);
+        int i = text.toLowerCase().startsWith("0b") ? Integer.parseInt(text.substring(2), 2)
+                : Integer.decode(text);
         switch (i) {
         case 0:
             output.addNoArgInstruction(ICONST_0);

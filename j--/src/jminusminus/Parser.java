@@ -280,7 +280,7 @@ public class Parser {
      */
 
     private boolean seeBasicType() {
-        if (see(BOOLEAN) || see(CHAR) || see(INT)) {
+        if (see(BOOLEAN) || see(CHAR) || see(INT) || see(LONG) || see(FLOAT) || see(DOUBLE)) {
             return true;
         } else {
             return false;
@@ -303,7 +303,8 @@ public class Parser {
             return true;
         } else {
             scanner.recordPosition();
-            if (have(BOOLEAN) || have(CHAR) || have(INT)) {
+            if (have(BOOLEAN) || have(CHAR) || have(INT) 
+            		|| have(LONG) || have(DOUBLE) || have(FLOAT)) {
                 if (have(LBRACK) && see(RBRACK)) {
                     scanner.returnToPosition();
                     return true;
@@ -895,7 +896,7 @@ public class Parser {
      * Parse a basic type.
      * 
      * <pre>
-     *   basicType ::= BOOLEAN | CHAR | INT
+     *   basicType ::= BOOLEAN | CHAR | INT | LONG | DOUBLE | FLOAT
      * </pre>
      * 
      * @return an instance of Type.
@@ -908,6 +909,12 @@ public class Parser {
             return Type.CHAR;
         } else if (have(INT)) {
             return Type.INT;
+        } else if (have(LONG)) {
+        	return Type.LONG;
+        } else if (have(FLOAT)) {
+        	return Type.FLOAT;
+        } else if (have(DOUBLE)) {
+        	return Type.DOUBLE;
         } else {
             reportParserError("Type sought where %s found", scanner.token()
                     .image());
@@ -1551,8 +1558,8 @@ public class Parser {
      * Parse a literal.
      * 
      * <pre>
-     *   literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL
-     *             | TRUE        | FALSE        | NULL
+     *   literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL | LONG_LITERAL
+     *             | TRUE        | FALSE        | NULL | DOUBLE_LITERAL | FLOAT_LITERAL
      * </pre>
      * 
      * @return an AST for a literal.
@@ -1563,13 +1570,13 @@ public class Parser {
         if (have(INT_LITERAL)) {
             return new JLiteralInt(line, scanner.previousToken().image());
         } 
-//        else if (have(LONG_LITERAL)) {
-//        	return new JLiteralLong(line, scanner.previousToken().image());
-//        } else if (have(DOUBLE_LITERAL)) {
-//        	return new JLiteralDouble(line, scanner.previousToken().image());
-//        } else if (have(FLOAT_LITERAL)) {
-//        	return new JLiteralFloat(line, scanner.previousToken().image());
-//        } 
+        else if (have(LONG_LITERAL)) {
+        	return new JLiteralLong(line, scanner.previousToken().image());
+        } else if (have(DOUBLE_LITERAL)) {
+        	return new JLiteralDouble(line, scanner.previousToken().image());
+        } else if (have(FLOAT_LITERAL)) {
+        	return new JLiteralFloat(line, scanner.previousToken().image());
+        } 
         else if (have(CHAR_LITERAL)) {
             return new JLiteralChar(line, scanner.previousToken().image());
         } else if (have(STRING_LITERAL)) {
