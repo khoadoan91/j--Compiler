@@ -123,7 +123,7 @@ class Scanner {
      */
 
     public TokenInfo getNextToken() {
-        StringBuffer buffer;
+        StringBuffer buffer = null;
         boolean moreWhiteSpace = true;
         while (moreWhiteSpace) {
             while (isWhitespace(ch)) {
@@ -315,21 +315,8 @@ class Scanner {
             if (isDigit(ch)) {
             	buffer = new StringBuffer();
             	buffer.append("0.");
-            	while (isDigit(ch) || ch == 'e') {
-            		buffer.append(ch);
-            		nextCh();
-            	}
-            	if (ch == 'f' || ch == 'F') {
-            		buffer.append(ch);
-            		nextCh();
-            		return new TokenInfo(FLOAT_LITERAL, buffer.toString(), line);
-            	} else {
-            		if (ch == 'd' || ch == 'D') {
-            			buffer.append(ch);
-            			nextCh();
-            		}
-            		return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
-            	} 
+            	nextCh();
+            	return scanFloatingNumber(buffer, ch);
             } else {
             	return new TokenInfo(DOT, line);
             }
@@ -355,30 +342,34 @@ class Scanner {
         case '0':
             // Handle only simple decimal integers for now.
             nextCh();
-//            buffer = new StringBuffer();
-//            if (ch == 'x') {
-//            	buffer.append("0x");
-//            	nextCh();
-//            	while (isHex(ch)) {
-//            		buffer.append(ch);
-//            		nextCh();
-//            	}
-//            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
-//            } else if (ch == 'b') {
-//            	buffer.append("0b");
-//            	nextCh();
-//            	while (ch == '0' || ch == '1') {
-//            		buffer.append(ch);
-//            		nextCh();
-//            	}
-//            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
-//            } else if (ch == '0') {
-//            	while (ch == '0') {
-//            		nextCh();
-//            	}
-//            	buffer.append("0");
-//            } 
-            return new TokenInfo(INT_LITERAL, "0", line);
+            if (ch == 'x') {
+                buffer = new StringBuffer();
+            	buffer.append("0x");
+            	nextCh();
+            	while (isHex(ch)) {
+            		buffer.append(ch);
+            		nextCh();
+            	}
+            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+            } else if (ch == 'b') {
+                buffer = new StringBuffer();
+            	buffer.append("0b");
+            	nextCh();
+            	while (ch == '0' || ch == '1') {
+            		buffer.append(ch);
+            		nextCh();
+            	}
+            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+            } else if (ch == '0') {
+            	while (ch == '0') {
+            		nextCh();
+            	}
+            	buffer = new StringBuffer("0");
+            } else if (ch == '.') {
+            	buffer = new StringBuffer("0.");
+            } else {
+            	return new TokenInfo(INT_LITERAL, "0", line);
+            }
         case '1':
         case '2':
         case '3':
@@ -388,14 +379,24 @@ class Scanner {
         case '7':
         case '8':
         case '9':
-//            if (buffer == null) 
-            	buffer = new StringBuffer();
+            if (buffer == null) {buffer = new StringBuffer();}
             while (isDigit(ch)) {
                 buffer.append(ch);
                 nextCh();
             }
             if (ch == 'L' || ch == 'l') {
+            	nextCh();
             	return new TokenInfo(LONG_LITERAL, buffer.toString(), line);
+            } else if (ch == '.') {
+            	if (buffer.toString().contains(".")) {
+            		reportScannerError("Invalid floating point number");
+            		nextCh();
+            		return getNextToken();
+            	} else {
+            		buffer.append(ch);
+            		nextCh();
+            		return scanFloatingNumber(buffer, ch);
+            	}
             }
             return new TokenInfo(INT_LITERAL, buffer.toString(), line);
         default:
@@ -417,6 +418,24 @@ class Scanner {
                 return getNextToken();
             }
         }
+    }
+    
+    private TokenInfo scanFloatingNumber(StringBuffer buffer, char c) {
+    	while (isDigit(ch)) {
+    		buffer.append(ch);
+    		nextCh();
+    	}
+    	if (ch == 'f' || ch == 'F') {
+    		buffer.append(ch);
+    		nextCh();
+    		return new TokenInfo(FLOAT_LITERAL, buffer.toString(), line);
+    	} else {
+    		if (ch == 'd' || ch == 'D') {
+    			buffer.append(ch);
+    			nextCh();
+    		}
+    		return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);
+    	}
     }
 
     /**
@@ -490,7 +509,7 @@ class Scanner {
     }
     
     private boolean isHex(char c) {
-    	return (c >= '0' && c <= '9' || c >= 'A' && c <= 'F' || c >= 'a' || c <= 'f');
+    	return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' || c <= 'f');
     }
 
     /**

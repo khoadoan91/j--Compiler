@@ -1,0 +1,19 @@
+Exercise 2.10. Modify Scanner in the j-- compiler to scan (and ignore) Java multi-line comments.
+	Already implemented in the class tests/pass/OperationsScanner.java
+	Compiler can build successfully
+
+Exercise 2.11. Modify Scanner in the j-- compiler to recognize and return all Java operators that are not reserved words.
+	Already implemented in the class tests/pass/OperationsScanner.java
+	Compiler can build successfully
+	
+Exercise 2.12. Modify Scanner in the j-- compiler to recognize and return all Java reserved words.
+	Already implemented in the class tests/fail/ReservedWordsErrors.java
+	Compiler can build successfully and report those reserved words are not allowed.
+	
+Exercise 2.13. Modify Scanner in the j-- compiler to recognize and return Java double- precision literals (returned as DOUBLE_LITERAL).
+	Implementing in the class tests/pass/NumberLiteral.java
+	Compiler can build  successfully but Junit test fails, I may need to modify to eliminate errors.
+	
+Exercise 2.14. Modify Scanner in the j-- compiler to recognize and return all other literals in Java, for example, FLOAT_LITERAL, LONG_LITERAL, etc.
+	Implementing in the class tests/pass/NumberLiteral.java
+	Compiler can build  successfully but Junit test fails, I may need to modify to eliminate errors.

@@ -5,7 +5,7 @@ package pass;
 
 public class OperatorsScanner {
 	
-	/*
+	/**
 	 * Multiline comment should not cause any errors.
 	 */
 	public int divide(int x, int y) {
