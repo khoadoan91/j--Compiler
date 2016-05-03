@@ -23,6 +23,8 @@ class JMethodDeclaration
 
     /** The formal parameters. */
     protected ArrayList<JFormalParameter> params;
+    
+    protected String exception;
 
     /** Method body. */
     protected JBlock body;
@@ -58,6 +60,7 @@ class JMethodDeclaration
      *                return type.
      * @param params
      *                the formal parameters.
+     * @param exception throws clause.
      * @param body
      *                method body.
      */
@@ -77,6 +80,14 @@ class JMethodDeclaration
         this.isStatic = mods.contains("static");
         this.isPrivate = mods.contains("private");
     }
+    
+    public JMethodDeclaration(int line, ArrayList<String> mods,
+            String name, Type returnType,
+            ArrayList<JFormalParameter> params, String exception, JBlock body)
+        {
+    		this(line, mods, name, returnType, params, body);
+    		this.exception = exception;
+        }
 
     /**
      * Declare this method in the parent (class) context.
@@ -139,7 +150,7 @@ class JMethodDeclaration
     public JAST analyze(Context context) {
         MethodContext methodContext = 
 	    new MethodContext(context, isStatic, returnType);
-	this.context = methodContext;
+        this.context = methodContext;
 
         if (!isStatic) {
             // Offset 0 is used to address "this".

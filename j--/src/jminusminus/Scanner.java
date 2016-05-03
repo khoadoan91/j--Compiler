@@ -110,6 +110,7 @@ class Scanner {
         reserved.put(THROWS.image(), THROWS);
         reserved.put(TRANSIENT.image(), TRANSIENT);
         reserved.put(TRY.image(), TRY);
+        reserved.put(UNTIL.image(), UNTIL);
         reserved.put(VOLATILE.image(), VOLATILE);
 
         // Prime the pump.
@@ -123,7 +124,7 @@ class Scanner {
      */
 
     public TokenInfo getNextToken() {
-        StringBuffer buffer = null;
+        StringBuffer buffer;
         boolean moreWhiteSpace = true;
         while (moreWhiteSpace) {
             while (isWhitespace(ch)) {
@@ -183,6 +184,12 @@ class Scanner {
         case ',':
             nextCh();
             return new TokenInfo(COMMA, line);
+        case '?':
+        	nextCh();
+        	return new TokenInfo(QUESTION, line);
+        case ':':
+        	nextCh();
+        	return new TokenInfo(COLON, line);
         case '=':
             nextCh();
             if (ch == '=') {
@@ -262,7 +269,7 @@ class Scanner {
             } else {
                 return new TokenInfo(LT, line);
             }
-        case '\'':
+        case '\'': 
             buffer = new StringBuffer();
             buffer.append('\'');
             nextCh();
@@ -343,30 +350,41 @@ class Scanner {
             // Handle only simple decimal integers for now.
             nextCh();
             if (ch == 'x') {
-                buffer = new StringBuffer();
-            	buffer.append("0x");
-            	nextCh();
-            	while (isHex(ch)) {
-            		buffer.append(ch);
-            		nextCh();
-            	}
-            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+            	buffer = new StringBuffer("0x");
+        		nextCh();
+        		if (isHex(ch)) {
+            		while (isHex(ch)) {
+            			buffer.append(ch);
+            			nextCh();
+            		}
+            		return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+        		} else {
+        			reportScannerError(ch
+                            + " found by scanner where hexidecimal number was expected.");
+        			nextCh();
+                    return getNextToken();
+        		}
             } else if (ch == 'b') {
-                buffer = new StringBuffer();
-            	buffer.append("0b");
-            	nextCh();
-            	while (ch == '0' || ch == '1') {
-            		buffer.append(ch);
-            		nextCh();
-            	}
-            	return new TokenInfo(INT_LITERAL, buffer.toString(), line);
-            } else if (ch == '0') {
-            	while (ch == '0') {
-            		nextCh();
-            	}
-            	buffer = new StringBuffer("0");
+            	buffer = new StringBuffer("0b");
+        		nextCh();
+        		if (ch == '0' || ch == '1') {
+        			while (ch == '0' || ch == '1') {
+        				buffer.append(ch);
+        				nextCh();
+        			}
+        			return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+        		} else {
+        			reportScannerError(ch
+                            + " found by scanner where binary number was expected.");
+        			nextCh();
+                    return getNextToken();
+        		}
             } else if (ch == '.') {
             	buffer = new StringBuffer("0.");
+            	nextCh();
+            	return scanFloatingNumber(buffer, ch);
+            } else if (ch == 'l' || ch == 'L') {
+            	return new TokenInfo(LONG_LITERAL, "0", line);
             } else {
             	return new TokenInfo(INT_LITERAL, "0", line);
             }
@@ -379,7 +397,9 @@ class Scanner {
         case '7':
         case '8':
         case '9':
-            if (buffer == null) {buffer = new StringBuffer();}
+            buffer = new StringBuffer();
+            buffer.append(ch);
+            nextCh();
             while (isDigit(ch)) {
                 buffer.append(ch);
                 nextCh();
@@ -421,17 +441,15 @@ class Scanner {
     }
     
     private TokenInfo scanFloatingNumber(StringBuffer buffer, char c) {
-    	while (isDigit(ch)) {
-    		buffer.append(ch);
-    		nextCh();
-    	}
+		while (isDigit(ch)) {
+			buffer.append(ch);
+			nextCh();
+		}
     	if (ch == 'f' || ch == 'F') {
-    		buffer.append(ch);
     		nextCh();
     		return new TokenInfo(FLOAT_LITERAL, buffer.toString(), line);
     	} else {
     		if (ch == 'd' || ch == 'D') {
-    			buffer.append(ch);
     			nextCh();
     		}
     		return new TokenInfo(DOUBLE_LITERAL, buffer.toString(), line);

@@ -33,6 +33,10 @@ class JWhileStatement extends JStatement {
         this.condition = condition;
         this.body = body;
     }
+    
+    public JExpression getCondition() {return condition;}
+    
+    public JStatement getBody() {return body;}
 
     /**
      * Analysis involves analyzing the test, checking its type and analyzing the

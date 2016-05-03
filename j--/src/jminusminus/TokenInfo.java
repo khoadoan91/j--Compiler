@@ -27,14 +27,15 @@ enum TokenKind {
 		    DIV("/"), MINUS_ASSIGN("-="), REMINDER("%"), NEQUAL("!="), GE(">="), LT("<"),
 		    LOR("||"), BIT_NOT ("~"), LEFT_SHIFT("<<"), RIGHT_SHIFT(">>"), URIGHT_SHIFT(">>>"),
 		    BIT_AND("&"), BIT_OR("|"), BIT_XOR("^"), STAR_ASSIGN("*="), DIV_ASSIGN("/="),
+		    QUESTION("?"), COLON(":"),
 		    
 		    ASSERT("assert"), BREAK("break"), BYTE("byte"), CASE("case"), CATCH("catch"),
 		    CONST("const"), CONTINUE("continue"), DEFAULT("default"), DO("DO"),
-		    DOUBLE("DOUBLE"), ENUM("ENUM"), FINAL("final"), FINALLY("finally"), FLOAT("float"),
+		    DOUBLE("double"), ENUM("enum"), FINAL("final"), FINALLY("finally"), FLOAT("float"),
 		    FOR("for"), GOTO("goto"), IMPLEMENTS("implements"), INTERFACE("interface"),
 		    LONG("long"), NATIVE("native"), SHORT("short"), STRICTFP("strictfp"), SWITCH("switch"),
 		    SYNCHRONIZED("synchronized"), THROW("throw"), THROWS("throws"), TRANSIENT("transient"),
-		    TRY("try"), VOLATILE("volatile"), 
+		    TRY("try"), UNTIL("until"), VOLATILE("volatile"), 
 		    DOUBLE_LITERAL("<DOUBLE_LITERAL"), FLOAT_LITERAL("<FLOAT_LITERAL>"), 
 		    LONG_LITERAL("<LONG_LITERAL>");
 

@@ -69,7 +69,6 @@ class JVariableDeclaration extends JStatement {
             int offset = ((LocalContext) context).nextOffset();
             LocalVariableDefn defn = new LocalVariableDefn(decl.type().resolve(
                     context), offset);
-
             // First, check for shadowing
             IDefn previousDefn = context.lookup(decl.name());
             if (previousDefn != null
@@ -78,7 +77,6 @@ class JVariableDeclaration extends JStatement {
                         "The name " + decl.name()
                                 + " overshadows another local variable.");
             }
-
             // Then declare it in the local context
             context.addEntry(decl.line(), decl.name(), defn);
 

@@ -40,7 +40,6 @@ class JIfStatement extends JStatement {
         this.thenPart = thenPart;
         this.elsePart = elsePart;
     }
-
     /**
      * Analyzing the if-statement means analyzing its components and checking
      * that the test is boolean.
@@ -112,5 +111,4 @@ class JIfStatement extends JStatement {
         p.indentLeft();
         p.printf("</JIfStatement>\n");
     }
-
 }

@@ -280,7 +280,7 @@ public class Parser {
      */
 
     private boolean seeBasicType() {
-        if (see(BOOLEAN) || see(CHAR) || see(INT) || see(LONG) || see(FLOAT) || see(DOUBLE)) {
+        if (see(BOOLEAN) || see(CHAR) || see(INT) || see(DOUBLE) || see(LONG) || see(FLOAT)) {
             return true;
         } else {
             return false;
@@ -427,6 +427,7 @@ public class Parser {
         boolean scannedPRIVATE = false;
         boolean scannedSTATIC = false;
         boolean scannedABSTRACT = false;
+        boolean scannedFINAL = false;
         boolean more = true;
         while (more)
             if (have(PUBLIC)) {
@@ -468,6 +469,12 @@ public class Parser {
                     reportParserError("Repeated modifier: abstract");
                 }
                 scannedABSTRACT = true;
+            } else if (have(FINAL)) {
+            	mods.add("final");
+            	if (scannedFINAL) {
+            		reportParserError("Repeated modifier: final");
+            	}
+            	scannedFINAL = true;
             } else {
                 more = false;
             }
@@ -565,8 +572,10 @@ public class Parser {
                 String name = scanner.previousToken().image();
                 ArrayList<JFormalParameter> params = formalParameters();
                 JBlock body = have(SEMI) ? null : block();
+                String throwsClause = have(THROWS) ? scanner.previousToken().image() : null;
+                
                 memberDecl = new JMethodDeclaration(line, mods, name, type,
-                        params, body);
+                        params, throwsClause, body);
             } else {
                 type = type();
                 if (seeIdentLParen()) {
@@ -635,6 +644,8 @@ public class Parser {
      *   statement ::= block
      *               | IF parExpression statement [ELSE statement]
      *               | WHILE parExpression statement 
+     *               | FOR forStatement
+     *               | SWITCH primary casesStatement
      *               | RETURN [expression] SEMI
      *               | SEMI 
      *               | statementExpression SEMI
@@ -656,11 +667,23 @@ public class Parser {
             JExpression test = parExpression();
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
-        } else if (have(FOR)) {
+        } else if (have(DO)) {
+        	JStatement body = statement();
+        	mustBe(UNTIL);
         	JExpression test = parExpression();
-        	JStatement statement = statement();
-        	// FIXME create JForStatement and replace it in the next line.
-        	return new JWhileStatement(line, test, statement);
+        	return new JDoUntilStatement(line, test, body);
+        } else if (have(FOR)) {
+        	return forStatement();
+        } else if (have(SWITCH)) {
+        	mustBe(LPAREN);
+        	JExpression test = simpleUnaryExpression();
+        	mustBe(RPAREN);
+        	mustBe(LCURLY);
+        	ArrayList<JCaseStatement> cases = casesStatement();
+        	mustBe(RCURLY);
+        	return new JSwitchStatement(line, test, cases);
+        } else if (have(TRY)) {
+        	return tryCatchFinallyStatement();
         } else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);
@@ -669,6 +692,9 @@ public class Parser {
                 mustBe(SEMI);
                 return new JReturnStatement(line, expr);
             }
+        } else if (have(THROW)) {
+        	mustBe(NEW);
+        	return new JThrowStatement(line, creator());
         } else if (have(SEMI)) {
             return new JEmptyStatement(line);
         } else { // Must be a statementExpression
@@ -676,6 +702,87 @@ public class Parser {
             mustBe(SEMI);
             return statement;
         }
+    }
+    
+    private JTryCatchFinallyStatement tryCatchFinallyStatement() {
+    	int line = scanner.token().line();
+    	JBlock block = block();
+    	mustBe(CATCH);
+		ArrayList<JCatchStatement> catchesBlock = catchesStatement();
+		JBlock finallyBlock = have(FINALLY) ? block() : null;
+		return new JTryCatchFinallyStatement(line, block, catchesBlock, finallyBlock);
+    }
+    
+    private ArrayList<JCatchStatement> catchesStatement() {
+    	int line = scanner.token().line();
+    	ArrayList<JCatchStatement> catchesBlock = new ArrayList<JCatchStatement>();
+		while (have(CATCH)) {
+    		JExceptionParameter exception = exceptionParameters();
+    		JBlock catchBlock = block();
+    		catchesBlock.add(new JCatchStatement(line, exception, catchBlock));
+		}
+		return catchesBlock;
+    }
+    
+    private JExceptionParameter exceptionParameters() {
+    	int line = scanner.token().line();
+        mustBe(LPAREN);
+    	ArrayList<Type> types = new ArrayList<Type>();
+        do {
+        	types.add(type());
+        } while (have(BIT_OR));
+        mustBe(IDENTIFIER);
+        String name = scanner.previousToken().image();
+        mustBe(RPAREN);
+        return new JExceptionParameter(line, name, types);
+    }
+    
+    /**
+     * Parse for statement.
+     * 
+     * <pre>
+     *   forStatement ::= LPARENT localVariableDeclarationStatement SEMI
+     *   					expression SEMI
+     *   					statementExpression {COMMA statementExpression}
+     *   				  RPAREN statement
+     * </pre>
+     * @return an AST for a forStatement.
+     */
+    private JStatement forStatement() {
+    	int line = scanner.token().line();
+    	mustBe(LPAREN);
+    	JVariableDeclaration init = localVariableDeclarationStatement();
+    	JExpression condition = expression();
+    	mustBe(SEMI);
+    	ArrayList<JExpression> increments = new ArrayList<JExpression>();
+    	do {
+    		increments.add(expression());
+    	} while (have(COMMA));
+    	mustBe(RPAREN);
+    	JStatement body = statement();
+    	return new JForStatement(line, init, condition, increments, body);
+    }
+    
+    private ArrayList<JCaseStatement> casesStatement() {
+    	int line = scanner.token().line();
+    	ArrayList<JCaseStatement> cases = new ArrayList<JCaseStatement>();
+        while (have(CASE)) {
+        	JExpression literal = literal();
+            mustBe(COLON);
+            ArrayList<JStatement> states = new ArrayList<JStatement>();
+            while (!see(CASE)) {
+            	states.add(statement());
+            }
+            cases.add(new JCaseStatement(line, literal, states));
+        }
+    	mustBe(DEFAULT);
+		mustBe(COLON);
+		ArrayList<JStatement> states = new ArrayList<JStatement>();
+		while (!see(RCURLY)) {
+			states.add(statement());
+		}
+		cases.add(new JCaseStatement(line, null, states));
+		return cases;
     }
 
     /**
@@ -1024,6 +1131,16 @@ public class Parser {
         	return new JStarAssignOp(line, lhs, assignmentExpression());
         } else if (have(DIV_ASSIGN)) {
         	return new JDivideAssignOp(line, lhs, assignmentExpression());
+        } else if (have(QUESTION)) {
+        	JExpression consequent = assignmentExpression();
+        	if (have(COLON)) {
+        		JExpression alternate = assignmentExpression();
+                return new JConditionExpression(line, lhs, consequent, alternate);
+        	} else {
+        		reportParserError("Invalid statement expression; "
+                        + "it must have a second statement expression after :");
+        	}
+        	return new JWildExpression(line);
         } else {
             return lhs;
         }
