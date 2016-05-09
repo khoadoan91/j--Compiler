@@ -110,4 +110,8 @@ public class OperatorsScanner {
 		return x ^ y;
 	}
 	
+	public int maxUsingConditionExpression(int a, int b) {
+		int c = (a > b) ? a : b;
+		return c;
+	}
 }

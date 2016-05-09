@@ -24,7 +24,7 @@ class JMethodDeclaration
     /** The formal parameters. */
     protected ArrayList<JFormalParameter> params;
     
-    protected String exception;
+    protected ArrayList<TypeName> exceptions;
 
     /** Method body. */
     protected JBlock body;
@@ -83,10 +83,10 @@ class JMethodDeclaration
     
     public JMethodDeclaration(int line, ArrayList<String> mods,
             String name, Type returnType,
-            ArrayList<JFormalParameter> params, String exception, JBlock body)
+            ArrayList<JFormalParameter> params, ArrayList<TypeName> exceptions, JBlock body)
         {
     		this(line, mods, name, returnType, params, body);
-    		this.exception = exception;
+    		this.exceptions = exceptions;
         }
 
     /**

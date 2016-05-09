@@ -9,7 +9,7 @@ import static jminusminus.CLConstants.GOTO;
  * @author KyleD
  *
  */
-public class JConditionExpression extends JExpression {
+public class JConditionalExpression extends JExpression {
 
 	/** Test expression. */
 	private JExpression condition;
@@ -33,7 +33,7 @@ public class JConditionExpression extends JExpression {
 	 * @param elsePart
 	 * 			else clause.
 	 */
-	public JConditionExpression(int line, JExpression condition, JExpression thenPart,
+	public JConditionalExpression(int line, JExpression condition, JExpression thenPart,
 			JExpression elsePart) {
 		super(line);
 		this.condition = condition;
@@ -49,11 +49,13 @@ public class JConditionExpression extends JExpression {
      *            context in which names are resolved.
      * @return the analyzed (and possibly rewritten) AST subtree.
      */
-	public JExpression analyze(Context context) {
+	public JConditionalExpression analyze(Context context) {
 		condition = (JExpression) condition.analyze(context);
 		condition.type().mustMatchExpected(line(), Type.BOOLEAN);
 		thenPart = (JExpression) thenPart.analyze(context);
 		elsePart = (JExpression) elsePart.analyze(context);
+		elsePart.type().mustMatchExpected(line(), thenPart.type());
+		type = thenPart.type();
 		return this;
 	}
 	

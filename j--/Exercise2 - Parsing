@@ -1,0 +1,62 @@
+Exercise 3.21. Modify the Parser to parse and return nodes for the double 
+literal and the float literal.
+	Already implemented in the class 
+		tests/pass/NumberLiteral.java
+		JDoubleLiteral.java
+		JFloatLiteral.java
+	Compiler can build successfully.
+	
+Exercise 3.22. Modify the Parser to parse and return nodes for the long 
+literal.
+	Already implemented in the class tests/pass/NumberLiteral.java, JLongLiteral.java
+	Compiler can build successfully.
+	
+Exercise 3.23. Modify the Parser to parse and return nodes for all the additional operators
+that are defined in Java but not yet in j--.
+	ALready implement in the classes
+		JNotEqualOp.java
+		JLessEqual.java
+		JGreaterThan.java
+		....
+	Compiler can build successfully.
+	
+Exercise 3.24. Modify the Parser to parse and return nodes for conditional expressions, for
+example,(a > b) ? a : b.
+	Already implement in the class JConditionExpression.
+	Compiler build successfully but there are some errors.   
+	// EDIT: Fixed and add OperatorsTest.
+	
+Exercise 3.25. Modify the Parser to parse and return nodes for the for-statement,
+including both the basic for-statement and the enhanced for-statement.
+	Already implement in the class JForStatement.
+	Compiler build successfully and there is no error.
+	// EDIT: Add LoopTest.
+	
+Exercise 3.26. Modify the Parser to parse and return nodes for the switch-statement.
+	Already implement in the class JSwitchStatement.
+	Infinity Runtime - never stop.							
+	// EDIT: Fixed and add SwitchStatementTest.
+	
+Exercise 3.27. Modify the Parser to parse and return nodes for the try-catch-finally statement.
+	Already implemented in the class JTryCatchFinally.
+	Haven't try to build yet.								
+	// EDIT: Add TryCatchFinally in tests/pass package and Completed
+	
+Exercise 3.28. Modify the Parser to parse and return nodes for the throw-statement.
+	ALready implemented in the class JThrowStatement.
+	Haven't try to build yet.								
+	// EDIT: Add ThrowsAndThrow in tests/pass package and Completed
+	
+Exercise 3.29. Modify the Parser to deal with a throws-clause in method declarations.
+	Already implemented by modifying in the JMethodDeclartor
+	Haven't try to build yet.								
+	// EDIT: Add ThrowsAndThrow in tests/pass package and Completed
+	
+
+(Bonus) Exercise 3.34. Say we wish to add a do-until statement to j--. For example, do {
+            x = x * x;
+       } until (x > 1000);
+       
+       Already implemented in the class JDoUntilStatement.
+       Haven't try to build yet								
+       // EDIT: Fixed

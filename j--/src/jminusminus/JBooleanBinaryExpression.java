@@ -177,10 +177,10 @@ class JNotEqualOp extends JBooleanBinaryExpression {
         lhs.codegen(output);
         rhs.codegen(output);
         if (lhs.type().isReference()) {
-            output.addBranchInstruction(onTrue ? IF_ACMPEQ : IF_ACMPNE,
+            output.addBranchInstruction(onTrue ? IF_ACMPNE : IF_ACMPEQ,
                     targetLabel);
         } else {
-            output.addBranchInstruction(onTrue ? IF_ICMPEQ : IF_ICMPNE,
+            output.addBranchInstruction(onTrue ? IF_ICMPNE : IF_ICMPEQ,
                     targetLabel);
         }
     }
@@ -313,14 +313,24 @@ class JLogicalOrOp extends JBooleanBinaryExpression {
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
         if (onTrue) {
-            String falseLabel = output.createLabel();
-            lhs.codegen(output, falseLabel, false);
+            lhs.codegen(output, targetLabel, true);
             rhs.codegen(output, targetLabel, true);
-            output.addLabel(falseLabel);
         } else {
-            lhs.codegen(output, targetLabel, false);
+            String falseLabel = output.createLabel();
+            lhs.codegen(output, falseLabel, true);
             rhs.codegen(output, targetLabel, false);
+            output.addLabel(falseLabel);
         }
+        
+//        if (onTrue) {
+//            String falseLabel = output.createLabel();
+//            lhs.codegen(output, falseLabel, false);
+//            rhs.codegen(output, targetLabel, true);
+//            output.addLabel(falseLabel);
+//        } else {
+//            lhs.codegen(output, targetLabel, false);
+//            rhs.codegen(output, targetLabel, false);
+//        }
     }
 
 }

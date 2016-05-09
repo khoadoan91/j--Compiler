@@ -30,7 +30,7 @@ enum TokenKind {
 		    QUESTION("?"), COLON(":"),
 		    
 		    ASSERT("assert"), BREAK("break"), BYTE("byte"), CASE("case"), CATCH("catch"),
-		    CONST("const"), CONTINUE("continue"), DEFAULT("default"), DO("DO"),
+		    CONST("const"), CONTINUE("continue"), DEFAULT("default"), DO("do"),
 		    DOUBLE("double"), ENUM("enum"), FINAL("final"), FINALLY("finally"), FLOAT("float"),
 		    FOR("for"), GOTO("goto"), IMPLEMENTS("implements"), INTERFACE("interface"),
 		    LONG("long"), NATIVE("native"), SHORT("short"), STRICTFP("strictfp"), SWITCH("switch"),

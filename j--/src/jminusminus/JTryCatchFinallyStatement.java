@@ -77,17 +77,17 @@ public class JTryCatchFinallyStatement extends JStatement {
  *
  */
 class JCatchStatement extends JStatement {
-	private JExceptionParameter exception;
+	private JFormalParameter exception;
 	private JBlock body;
 	
-	public JCatchStatement(int line, JExceptionParameter exception, JBlock body) {
+	public JCatchStatement(int line, JFormalParameter exception, JBlock body) {
 		super(line);
 		this.exception = exception;
 		this.body = body;
 	}
 	
 	public JCatchStatement analyze(Context context) {
-		exception = (JExceptionParameter) exception.analyze(context);
+		exception = (JFormalParameter) exception.analyze(context);
 		body = (JBlock) body.analyze(context);
 		return this;
 	}
@@ -115,61 +115,4 @@ class JCatchStatement extends JStatement {
 		p.indentLeft();
 		p.printf("</JCatchStatement>\n");
 	}
-}
-
-class JExceptionParameter extends JAST {
-	
-	private ArrayList<Type> types;
-	private String name;
-	
-	public JExceptionParameter(int line, String name, ArrayList<Type> types) {
-		super(line);
-		this.types = types;
-		this.name = name;
-	}
-	
-	public ArrayList<Type> type() {
-		return new ArrayList<Type>(types);
-	}
-	
-	public String name() {
-		return name;
-	}
-	
-	public JAST analyze(Context context) {
-		return this;
-	}
-	
-	/**
-     * No code generated here.
-     * 
-     * @param output
-     *            the code emitter (basically an abstraction for producing the
-     *            .class file).
-     */
-
-    public void codegen(CLEmitter output) {
-        // Nothing to do
-    }
-
-    /**
-     * @inheritDoc
-     */
-
-    public void writeToStdOut(PrettyPrinter p) {
-    	String typesString = typesToString();
-        p.printf("<JExceptionParameter line=\"%d\" name=\"%s\" "
-                + "types=\"[%s]\"/>\n", line(), name, (types == null) ? "" 
-                		: typesString);
-    }
-    
-    private String typesToString() {
-    	StringBuilder sb = new StringBuilder();
-    	sb.append(types.get(0));
-    	for (int i = 1; i < types.size(); i++) {
-    		sb.append(", ");
-    		sb.append(types.get(i));
-    	}
-    	return sb.toString();
-    }
 }
