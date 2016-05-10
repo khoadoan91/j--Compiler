@@ -3,6 +3,7 @@
 package jminusminus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The abstract syntax tree (AST) node representing a compilation unit, and so
@@ -63,6 +64,9 @@ class JCompilationUnit extends JAST {
 
     /** Whether a semantic error has been found. */
     private boolean isInError;
+    
+    /** Whether a class name is similar to java file name. */
+    private boolean isClassValid;
 
     /**
      * Construct an AST node for a compilation unit given a file name, class
@@ -90,6 +94,7 @@ class JCompilationUnit extends JAST {
         this.typeDeclarations = typeDeclarations;
         clFiles = new ArrayList<CLFile>();
         compilationUnit = this;
+        isClassValid = false;
     }
 
     /**
@@ -180,10 +185,34 @@ class JCompilationUnit extends JAST {
      */
 
     public JAST analyze(Context context) {
+    	String[] absDir = fileName.split("/");
+    	String classFromFileName = absDir[absDir.length - 1];
+    	classFromFileName = classFromFileName.substring(0, classFromFileName.length() - 5);
+//    	System.err.println("file name : " + classFromFileName);
         for (JAST typeDeclaration : typeDeclarations) {
+        	if (typeDeclaration instanceof JClassDeclaration) {
+        		JClassDeclaration classDecl = (JClassDeclaration) typeDeclaration;
+        		checkClassValid(classDecl, classFromFileName);
+        	}
             typeDeclaration.analyze(this.context);
         }
+        if (!isClassValid) {
+        	reportSemanticError(line(), 
+					"A file must have one public class that has the same name as the file");
+        }
         return this;
+    }
+    
+    private void checkClassValid(JClassDeclaration classDecl, String classFromFileName) {
+    	if (classDecl.mods().contains("public") && 
+				classDecl.name().equals(classFromFileName) &&
+				!isClassValid) 
+		{
+			isClassValid = true;
+		} else if (isClassValid && classDecl.mods().contains("public")) {
+			reportSemanticError(classDecl.line(), 
+					"A file must have one public class");
+		}
     }
 
     /**

@@ -1,0 +1,19 @@
+Exercise 4.1. The compiler does not enforce the Java rule that only one type declaration 
+(that is, class declaration in j--) be declared public. Repair this in one of the analyze() 
+methods.
+	Already implemented in the class 
+		src/jminusminus/JCompilationUnit.java in analyze() method.
+	Build successfully.
+	Test is implemented in the 
+		tests/fail/PublicClass.java
+		
+Exercise 4.2. The analyze() method in JVariable assigns the type Type.ANY to a JVariable 
+(for example, x) in the AST that has not been declared in the symbol table. This prevents 
+a cascading of multiple errors from the report of a single undeclared variable. But we could 
+go further by declaring the variable (as Type.ANY) in the symbol table so as to suppress 
+superfluous error reports in subsequent encounters of the variable. Make this improvement to analysis.
+	Already implemented in the class
+		src/jminusminus/JVariable.java in analyze() method.
+	Build successfully.
+	Test is implemented in the 
+		test/fail/UndeclaredVariable.java

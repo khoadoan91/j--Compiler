@@ -368,7 +368,6 @@ class JReminderOp extends JBinaryExpression {
         rhs.codegen(output);
         output.addNoArgInstruction(IREM);
     }
-
 }
 
 /**

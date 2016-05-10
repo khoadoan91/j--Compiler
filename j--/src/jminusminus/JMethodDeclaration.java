@@ -88,6 +88,16 @@ class JMethodDeclaration
     		this(line, mods, name, returnType, params, body);
     		this.exceptions = exceptions;
         }
+    
+    /**
+     * Return the list of modifiers.
+     * 
+     * @return list of modifiers.
+     */
+
+    public ArrayList<String> mods() {
+        return mods;
+    }
 
     /**
      * Declare this method in the parent (class) context.

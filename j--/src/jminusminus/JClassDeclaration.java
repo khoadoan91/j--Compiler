@@ -40,6 +40,15 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
+    
+    /** Is class abstract. */
+    private boolean isAbstract;
+
+    /** Is class final. */
+    private boolean isFinal;
+
+    /** Is class private. */
+    private boolean isPrivate;
 
     /**
      * Construct an AST node for a class declaration given the line number, list
@@ -68,6 +77,9 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         hasExplicitConstructor = false;
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();
         staticFieldInitializations = new ArrayList<JFieldDeclaration>();
+        this.isAbstract = mods.contains("abstract");
+        this.isFinal = mods.contains("final");
+        this.isPrivate = mods.contains("private");
     }
 
     /**
@@ -88,6 +100,16 @@ class JClassDeclaration extends JAST implements JTypeDecl {
 
     public Type superType() {
         return superType;
+    }
+    
+    /**
+     * Return the list of modifiers.
+     * 
+     * @return list of modifiers.
+     */
+
+    public ArrayList<String> mods() {
+        return mods;
     }
 
     /**
@@ -151,6 +173,23 @@ class JClassDeclaration extends JAST implements JTypeDecl {
         if (superType.isFinal()) {
             JAST.compilationUnit.reportSemanticError(line,
                     "Cannot extend a final type: %s", superType.toString());
+        }
+        
+        for (JMember member : classBlock) {
+        	if (member instanceof JMethodDeclaration 
+        			&& ((JMethodDeclaration) member).mods().contains("abstract") 
+        			&& !isAbstract) 
+        	{
+        		JAST.compilationUnit.reportSemanticError(line(),
+        			"class must be declared abstract to have abstract method");
+        	}
+        }
+        if (isAbstract && isPrivate) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                "private class cannot be declared abstract");
+        } else if (isAbstract && isFinal) {
+            JAST.compilationUnit.reportSemanticError(line(),
+                "static class cannot be declared final");
         }
 
         // Create the (partial) class
